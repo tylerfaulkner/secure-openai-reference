@@ -42,9 +42,23 @@ namespace grande_demo.Server.Controllers
             public string request { get; set; }
         }
 
+        private static DefaultAzureCredential GetAzureCredential()
+        {
+            var credentialOptions = new DefaultAzureCredentialOptions
+            {
+                ExcludeAzureCliCredential = false,
+                ExcludeVisualStudioCredential = false,
+                ExcludeVisualStudioCodeCredential = false,
+                ExcludeSharedTokenCacheCredential = false,
+                //ExcludeManagedIdentityCredential = true, //Only use this if you want to exclude Managed Identity (Often if you have issues with signing in, or if you are using environment variables)
+            };
+            var credential = new DefaultAzureCredential(true);
+            return credential;
+        }
+
         private static AccessToken GetToken(string[] context)
         {
-            var credential = new DefaultAzureCredential(true);
+            var credential = GetAzureCredential();
             var tokenRequestContext = new TokenRequestContext(context);
             AccessToken accessToken = credential.GetToken(tokenRequestContext);
             return accessToken;
@@ -111,7 +125,7 @@ namespace grande_demo.Server.Controllers
             // TODO: Replace <storage-account-name> with your actual storage account name
             var blobServiceClient = new BlobServiceClient(
                     new Uri("https://" + accountName + ".blob.core.windows.net"),
-                    new DefaultAzureCredential(true));
+                    GetAzureCredential());
 
 
             // Create the container and return a container client object
@@ -140,7 +154,7 @@ namespace grande_demo.Server.Controllers
             // TODO: Replace <storage-account-name> with your actual storage account name
             var blobServiceClient = new BlobServiceClient(
                     new Uri("https://" + accountName + ".blob.core.windows.net"),
-                    new DefaultAzureCredential(true));
+                    GetAzureCredential());
 
             // Create the container and return a container client object
             BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(containerName);
@@ -164,7 +178,7 @@ namespace grande_demo.Server.Controllers
             // TODO: Replace <storage-account-name> with your actual storage account name
             var blobServiceClient = new BlobServiceClient(
                     new Uri("https://" + accountName + ".blob.core.windows.net"),
-                    new DefaultAzureCredential(true));
+                    GetAzureCredential());
 
             // Create the container and return a container client object
             blobServiceClient.DeleteBlobContainer(containerName);
